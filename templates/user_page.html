@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Page</title>
+    <style>
+        /* General styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        h1, h2 {
+            color: #007bff;
+        }
+        h1 {
+            margin: 20px;
+        }
+        .container {
+            width: 90%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            margin-top: 10px;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"], input[type="date"], input[type="number"], input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Welcome, {{ user_name }}</h1>
+
+<!-- Available Events Section -->
+<div class="container">
+    <h2 class="section-title">Available Events</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Venue</th>
+                <th>Held By</th>
+                <th>Participants</th>
+                <th>Food Type</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for event in events %}
+            <tr>
+                <td>{{ event.name }}</td>
+                <td>{{ event.date }}</td>
+                <td>{{ event.venue }}</td>
+                <td>{{ event.held_by }}</td>
+                <td>{{ event.participants_count }}</td>
+                <td>{{ event.food_type }}</td>
+                <td>
+                    <!-- Book event form -->
+                    <form method="POST" action="{{ url_for('user_page') }}">
+                        <input type="hidden" name="event_id" value="{{ event.id }}">
+                        <button type="submit" name="book_event">Book</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Event Form Section -->
+<div class="container">
+    <h2 class="section-title">Add New Event</h2>
+    <form method="POST" action="{{ url_for('user_page') }}">
+        <div class="form-group">
+            <label for="event_name">Event Name:</label>
+            <input type="text" name="event_name" required>
+        </div>
+        <div class="form-group">
+            <label for="event_date">Event Date:</label>
+            <input type="date" name="event_date" required>
+        </div>
+        <div class="form-group">
+            <label for="event_venue">Event Venue:</label>
+            <input type="text" name="event_venue" required>
+        </div>
+        <div class="form-group">
+            <label for="event_held_by">Held By:</label>
+            <input type="text" name="event_held_by" required>
+        </div>
+        <div class="form-group">
+            <label for="event_participants_count">Number of Participants:</label>
+            <input type="number" name="event_participants_count" required>
+        </div>
+        <div class="form-group">
+            <label for="event_food_type">Food Type:</label>
+            <input type="text" name="event_food_type" required>
+        </div>
+        <div class="form-group">
+            <label for="event_price">Price per team:</label>
+            <input type="text" name="event_price" required>
+        </div>
+        <button type="submit" name="add_event">Add Event</button>
+    </form>
+</div>
+
+<!-- Booked Events Section -->
+<div class="container">
+    <h2 class="section-title">Your Booked Events</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Event Name</th>
+                <th>Date</th>
+                <th>Venue</th>
+                <th>Held By</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.event.name }}</td>
+                <td>{{ booking.event.date }}</td>
+                <td>{{ booking.event.venue }}</td>
+                <td>{{ booking.event.held_by }}</td>
+                <td>
+                    <form method="POST" action="{{ url_for('cancel_booking', booking_id=booking.id) }}">
+                        <button type="submit" name="cancel_booking">Cancel</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
